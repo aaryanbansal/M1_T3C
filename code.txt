@@ -1,0 +1,35 @@
+// C++ code
+const int motionSensorPin = 2;
+const int soilMoisturePin = A0;
+
+volatile bool motionDetected = false;
+volatile bool moistureDetected = false;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(motionSensorPin, INPUT);
+  pinMode(soilMoisturePin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(motionSensorPin), motionInterrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(soilMoisturePin), moistureInterrupt, CHANGE);
+}
+
+void loop() {
+  if (motionDetected) {
+    Serial.println("Motion detected!");
+    motionDetected = false;
+  }
+  if (moistureDetected) {
+    int moistureLevel = analogRead(soilMoisturePin);
+    Serial.print("Moisture level: ");
+    Serial.println(moistureLevel);
+    moistureDetected = false;
+  }
+}
+
+void motionInterrupt() {
+  motionDetected = true;
+}
+
+void moistureInterrupt() {
+  moistureDetected = true;
+}
